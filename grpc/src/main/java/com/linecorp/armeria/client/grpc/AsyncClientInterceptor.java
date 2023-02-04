@@ -32,6 +32,6 @@ public interface AsyncClientInterceptor extends ClientInterceptor {
     @Override
     default <I, O> ClientCall<I, O> interceptCall(
             MethodDescriptor<I, O> method, CallOptions callOptions, Channel next) {
-        return new DeferredListener<>(method, asyncInterceptCall(method, callOptions, next));
+        return new DelayedClientCall<>(method, asyncInterceptCall(method, callOptions, next));
     }
 }
