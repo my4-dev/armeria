@@ -310,6 +310,7 @@ final class FramedGrpcService extends AbstractHttpService implements GrpcService
 
         call.setListener(listener);
         call.startDeframing();
+        // TODO:(miyoshi) Is there any other methods in order to inspect the http2 stream is cancelled.
         ctx.whenRequestCancelling().handle((cancellationCause, unused) -> {
             Status status = Status.CANCELLED.withCause(cancellationCause);
             if (cancellationCause instanceof RequestTimeoutException) {
