@@ -74,6 +74,8 @@ public final class GraphqlServiceBuilder {
     private final ImmutableList.Builder<GraphqlConfigurator> graphqlBuilderConsumers =
             ImmutableList.builder();
 
+    private ExecutionIdGenerator executionIdGenerator = ExecutionIdGenerator.of();
+
     private boolean useBlockingTaskExecutor;
 
     @Nullable
@@ -242,12 +244,18 @@ public final class GraphqlServiceBuilder {
         return this;
     }
 
+    public GraphqlServiceBuilder executionIdGenerator(ExecutionIdGenerator executionIdGenerator) {
+        this.executionIdGenerator = requireNonNull(executionIdGenerator, "executionIdGenerator");
+        return this;
+    }
+
     /**
      * Creates a {@link GraphqlService}.
      */
     public GraphqlService build() {
         final GraphQLSchema schema = buildSchema();
         GraphQL.Builder builder = GraphQL.newGraphQL(schema);
+        builder.executionIdProvider(executionIdGenerator.asExecutionProvider());
         final List<Instrumentation> instrumentations = this.instrumentations.build();
         if (!instrumentations.isEmpty()) {
             builder = builder.instrumentation(new ChainedInstrumentation(instrumentations));
